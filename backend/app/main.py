@@ -22,6 +22,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import traceback
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+@app.middleware("http")
+async def catch_exceptions_middleware(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as exc:
+        tb = traceback.format_exc()
+        return JSONResponse(
+            status_code=500,
+            content={
+                "detail": str(exc),
+                "traceback": tb,
+            },
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*",
+            }
+        )
+
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
