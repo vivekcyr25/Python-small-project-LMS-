@@ -37,26 +37,40 @@ def _init_firebase() -> None:
     try:
         import firebase_admin
         from firebase_admin import credentials
+        import json
 
-        service_account_path = settings.FIREBASE_SERVICE_ACCOUNT_PATH
-
-        if not os.path.isfile(service_account_path):
-            _init_error = (
-                f"Service account file not found at '{service_account_path}'. "
-                "Please set FIREBASE_SERVICE_ACCOUNT_PATH in your .env."
-            )
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail=f"Firebase is not properly configured: {_init_error}",
-            )
+        firebase_credentials_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
 
         try:
             _firebase_app = firebase_admin.get_app()
         except ValueError:
-            cred = credentials.Certificate(service_account_path)
+            if firebase_credentials_json:
+                try:
+                    cred_dict = json.loads(firebase_credentials_json)
+                    cred = credentials.Certificate(cred_dict)
+                except Exception as exc:
+                    _init_error = f"Failed to parse FIREBASE_CREDENTIALS_JSON: {exc}"
+                    raise HTTPException(
+                        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                        detail=f"Firebase is not properly configured: {_init_error}",
+                    )
+            else:
+                service_account_path = settings.FIREBASE_SERVICE_ACCOUNT_PATH
+                if not os.path.isfile(service_account_path):
+                    _init_error = (
+                        f"Service account file not found at '{service_account_path}'. "
+                        "Please set FIREBASE_SERVICE_ACCOUNT_PATH or FIREBASE_CREDENTIALS_JSON in environment variables."
+                    )
+                    raise HTTPException(
+                        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                        detail=f"Firebase is not properly configured: {_init_error}",
+                    )
+                cred = credentials.Certificate(service_account_path)
+
             _firebase_app = firebase_admin.initialize_app(cred)
 
     except HTTPException:
+
         raise
     except Exception as exc:
         _init_error = str(exc)
