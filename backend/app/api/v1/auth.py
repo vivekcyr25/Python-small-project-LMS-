@@ -134,7 +134,7 @@ def firebase_login(body: FirebaseLoginRequest, db: Session = Depends(get_db)):
 
         # Generate an unusable hashed password (satisfies the non-nullable column).
         # This cannot be used to log in via the normal /login endpoint.
-        unusable_password = get_password_hash(secrets.token_hex(32))
+        unusable_password = get_password_hash(secrets.token_urlsafe(32)[:32])
 
         user = User(
             email=user_email,
