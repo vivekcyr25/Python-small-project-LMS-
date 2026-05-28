@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Any, Union
 from app.core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__truncate_error=False)
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
