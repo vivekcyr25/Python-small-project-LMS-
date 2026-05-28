@@ -1,0 +1,29 @@
+# Local environment variables
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env
+CLASS PROJECT 2025/.env
+
+# Unrelated Projects
+CLASS PROJECT 2025/
+
+# Dependencies
+node_modules/
+backend/venv/
+frontend/node_modules/
+
+# Databases and system/service keys
+*.db
+backend/*.db
+backend/firebase-service-account.json
+*service-account*.json
+
+# Logs and system files
+*.log
+.cursor/
+.sixth/
+dist/
+build/
+.vercel/
