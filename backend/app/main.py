@@ -16,7 +16,11 @@ app = FastAPI(title="LMS API", version="1.0.0")
 # CORS Setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("CORS_ORIGIN", "*")],
+    allow_origins=[
+        "https://vivekcyr25.github.io",
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,4 +62,3 @@ def health_check():
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the LMS API"}
-
