@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     FIREBASE_PROJECT_ID: str = os.getenv("FIREBASE_PROJECT_ID", "replace-with-firebase-project-id")
     FIREBASE_SERVICE_ACCOUNT_PATH: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH", "./firebase-service-account.json")
 
+    def __init__(self, **values):
+        super().__init__(**values)
+        if self.DATABASE_URL.startswith("postgres://"):
+            self.DATABASE_URL = self.DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
     class Config:
         env_file = ".env"
