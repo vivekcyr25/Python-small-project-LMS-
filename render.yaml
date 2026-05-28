@@ -18,6 +18,8 @@ services:
         value: "1440"
       - key: BACKEND_CORS_ORIGINS
         value: "http://localhost:5173,http://127.0.0.1:5173,https://vivekcyr25.github.io"
+      - key: CORS_ORIGIN
+        value: "https://vivekcyr25.github.io"
       - key: FIREBASE_PROJECT_ID
         value: "lms-aurora-glass"
       - key: FIREBASE_SERVICE_ACCOUNT_PATH

@@ -1,20 +1,30 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import api_router
-from app.core.config import settings
+from app.db.session import engine
+from app.db.base import Base
+# Import models to ensure they are registered on Base.metadata
+from app.models.user import User
+from app.models.course import Course
+from app.models.enrollment import Enrollment
+from app.models.content import Module, Lesson
+from app.models.assessment import LessonProgress, Quiz, Question, AnswerOption, QuizAttempt, QuizAttemptAnswer, Certificate
 
 app = FastAPI(title="LMS API", version="1.0.0")
 
 # CORS Setup
-origins = settings.BACKEND_CORS_ORIGINS.split(",")
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[os.getenv("CORS_ORIGIN", "*")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
 app.include_router(api_router, prefix="/api/v1")
 
