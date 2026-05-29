@@ -127,11 +127,7 @@ const LoginPage = () => {
                 <div className="flex-1 h-px bg-white/10" />
               </div>
 
-              {isFirebaseMockMode() && (
-                <p className="text-xs text-amber-400/90 text-center bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                  Dev mode: Google and Phone OTP use mock auth. See docs/FIREBASE_SETUP.md for real Firebase.
-                </p>
-              )}
+
 
               <GoogleLoginButton />
 

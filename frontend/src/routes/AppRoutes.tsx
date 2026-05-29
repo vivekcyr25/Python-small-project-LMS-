@@ -14,6 +14,11 @@ import CourseDetailPage from '../pages/courses/CourseDetailPage';
 import CoursePlayerPage from '../pages/courses/CoursePlayerPage';
 import CourseFormPage from '../pages/courses/CourseFormPage';
 
+// Info Pages
+import PrivacyPolicyPage from '../pages/info/PrivacyPolicyPage';
+import SourcesPage from '../pages/info/SourcesPage';
+import TermsPage from '../pages/info/TermsPage';
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -28,6 +33,9 @@ const AppRoutes = () => {
           <Route path="/courses" element={<CourseListPage />} />
           <Route path="/courses/:id" element={<CourseDetailPage />} />
           <Route path="/courses/:id/learn" element={<CoursePlayerPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/sources" element={<SourcesPage />} />
+          <Route path="/terms" element={<TermsPage />} />
 
           {/* Student Routes */}
           <Route element={<RoleBasedRoute allowedRoles={['student']} />}>
