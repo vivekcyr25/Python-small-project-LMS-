@@ -9,7 +9,6 @@ import { Badge } from '../../components/ui/badge';
 import useAuthStore from '../../stores/authStore';
 import { motion } from 'framer-motion';
 import { BookOpen, CheckCircle, Clock, Globe, Award, Sparkles, ArrowRight, Lock, PlayCircle } from 'lucide-react';
-import CourseContent from '../../components/course/CourseContent';
 
 const CourseDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -142,9 +141,16 @@ const CourseDetailPage = () => {
                   )}
 
                   {(user?.role === 'admin' || (user?.role === 'instructor' && course.instructor_id === user.id)) && (
-                    <Link to={`/courses/${id}/edit`} className="w-full">
-                      <Button variant="outline" className="w-full">Edit Course</Button>
-                    </Link>
+                    <div className="space-y-2">
+                      <Link to={`/instructor/courses/${id}/builder`} className="w-full block">
+                        <Button variant="gradient" className="w-full flex items-center justify-center gap-2">
+                          <PlayCircle size={16} /> Open Course Builder
+                        </Button>
+                      </Link>
+                      <Link to={`/courses/${id}/edit`} className="w-full block">
+                        <Button variant="outline" className="w-full">Edit Metadata</Button>
+                      </Link>
+                    </div>
                   )}
                 </div>
               </Card>
@@ -180,10 +186,6 @@ const CourseDetailPage = () => {
               <h2 className="text-xl font-bold text-white mb-4">Course Description</h2>
               <p className="text-slate-300 text-sm leading-relaxed">{course.description}</p>
             </Card>
-          </motion.div>
-          
-          <motion.div variants={item}>
-            <CourseContent courseId={Number(id)} instructorId={course.instructor_id} />
           </motion.div>
         </div>
 

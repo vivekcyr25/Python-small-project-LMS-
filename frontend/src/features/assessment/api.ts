@@ -1,41 +1,20 @@
-import api from '../../lib/api';
+/**
+ * Backwards-compat shim. The legacy /assessment endpoints were
+ * removed in Phase 2 and replaced with /progress and /quizzes
+ * routes. This file re-exports the new APIs under the old names.
+ */
+import { completeLesson, getCourseProgress as _getCourseProgress } from '../progress/api';
 
 export const updateProgress = async (data: { lesson_id: number; completed: boolean }) => {
-  const response = await api.post('/assessment/progress', data);
-  return response.data;
+  if (data.completed) {
+    return await completeLesson(data.lesson_id);
+  }
+  // No-op for legacy callers that pass completed=false.
+  return null;
 };
 
 export const getCourseProgress = async (courseId: string | number) => {
-  const response = await api.get(`/assessment/progress/${courseId}`);
-  return response.data;
+  return await _getCourseProgress(courseId);
 };
 
-export const createQuiz = async (data: any) => {
-  const response = await api.post('/assessment/quizzes', data);
-  return response.data;
-};
-
-export const getCourseQuizzes = async (courseId: string | number) => {
-  const response = await api.get(`/assessment/courses/${courseId}/quizzes`);
-  return response.data;
-};
-
-export const createQuestion = async (quizId: string | number, data: any) => {
-  const response = await api.post(`/assessment/quizzes/${quizId}/questions`, data);
-  return response.data;
-};
-
-export const getQuizQuestions = async (quizId: string | number) => {
-  const response = await api.get(`/assessment/quizzes/${quizId}/questions`);
-  return response.data;
-};
-
-export const issueCertificate = async (data: { course_id: number; certificate_url?: string }) => {
-  const response = await api.post('/assessment/certificates', data);
-  return response.data;
-};
-
-export const getMyCertificates = async () => {
-  const response = await api.get('/assessment/certificates');
-  return response.data;
-};
+export { createQuiz, getQuizForLesson as getCourseQuizzes, addQuestion as createQuestion } from '../quizzes/api';

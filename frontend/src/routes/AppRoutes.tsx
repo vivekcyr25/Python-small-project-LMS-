@@ -11,8 +11,9 @@ import InstructorDashboard from '../pages/instructor/InstructorDashboard';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import CourseListPage from '../pages/courses/CourseListPage';
 import CourseDetailPage from '../pages/courses/CourseDetailPage';
-import CoursePlayerPage from '../pages/courses/CoursePlayerPage';
+import CourseLearnPage from '../pages/courses/CourseLearnPage';
 import CourseFormPage from '../pages/courses/CourseFormPage';
+import InstructorCourseBuilderPage from '../pages/instructor/InstructorCourseBuilderPage';
 
 // Info Pages
 import PrivacyPolicyPage from '../pages/info/PrivacyPolicyPage';
@@ -32,7 +33,7 @@ const AppRoutes = () => {
           <Route path="/" element={<Navigate to="/courses" replace />} />
           <Route path="/courses" element={<CourseListPage />} />
           <Route path="/courses/:id" element={<CourseDetailPage />} />
-          <Route path="/courses/:id/learn" element={<CoursePlayerPage />} />
+          <Route path="/courses/:id/learn" element={<CourseLearnPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/sources" element={<SourcesPage />} />
           <Route path="/terms" element={<TermsPage />} />
@@ -43,8 +44,9 @@ const AppRoutes = () => {
           </Route>
 
           {/* Instructor Routes */}
-          <Route element={<RoleBasedRoute allowedRoles={['instructor']} />}>
+          <Route element={<RoleBasedRoute allowedRoles={['instructor', 'admin']} />}>
             <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+            <Route path="/instructor/courses/:id/builder" element={<InstructorCourseBuilderPage />} />
             <Route path="/courses/new" element={<CourseFormPage />} />
             <Route path="/courses/:id/edit" element={<CourseFormPage />} />
           </Route>

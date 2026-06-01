@@ -152,7 +152,7 @@ const StudentDashboard = () => {
                         <Progress value={35} />
                       </div>
                     </div>
-                    <Link to={`/courses/${course.id}`}>
+                    <Link to={`/courses/${course.id}/learn`}>
                       <Button className="w-full flex items-center justify-center gap-2" variant="glass">
                         Continue Learning <ArrowRight size={14} />
                       </Button>

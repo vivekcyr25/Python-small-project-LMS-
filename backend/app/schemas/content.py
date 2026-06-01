@@ -1,51 +1,78 @@
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, ConfigDict
+from typing import Optional
 from datetime import datetime
 
-class ModuleBase(BaseModel):
+
+# ─────────────────────────────────────────────────────────
+# Section
+# ─────────────────────────────────────────────────────────
+class SectionCreate(BaseModel):
     title: str
-    order: Optional[int] = 0
+    description: Optional[str] = None
+    order_index: Optional[int] = 0
+    is_published: bool = False
 
-class ModuleCreate(ModuleBase):
-    course_id: int
 
-class ModuleUpdate(BaseModel):
+class SectionUpdate(BaseModel):
     title: Optional[str] = None
-    order: Optional[int] = None
+    description: Optional[str] = None
+    order_index: Optional[int] = None
+    is_published: Optional[bool] = None
 
-class Module(ModuleBase):
+
+class SectionRead(BaseModel):
     id: int
     course_id: int
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-class LessonBase(BaseModel):
     title: str
-    video_url: Optional[str] = None
-    content: Optional[str] = None
-    order: Optional[int] = 0
+    description: Optional[str] = None
+    order_index: int
+    is_published: bool
+    created_at: datetime
+    updated_at: datetime
 
-class LessonCreate(LessonBase):
-    module_id: int
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ─────────────────────────────────────────────────────────
+# Lesson
+# ─────────────────────────────────────────────────────────
+class LessonCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    lesson_type: str = "markdown"  # video | markdown | pdf | quiz
+    content_text: Optional[str] = None
+    content_url: Optional[str] = None
+    duration_seconds: Optional[int] = None
+    order_index: Optional[int] = 0
+    is_preview: bool = False
+    is_published: bool = False
+
 
 class LessonUpdate(BaseModel):
     title: Optional[str] = None
-    video_url: Optional[str] = None
-    content: Optional[str] = None
-    order: Optional[int] = None
+    description: Optional[str] = None
+    lesson_type: Optional[str] = None
+    content_text: Optional[str] = None
+    content_url: Optional[str] = None
+    duration_seconds: Optional[int] = None
+    order_index: Optional[int] = None
+    is_preview: Optional[bool] = None
+    is_published: Optional[bool] = None
 
-class Lesson(LessonBase):
+
+class LessonRead(BaseModel):
     id: int
-    module_id: int
+    section_id: int
+    title: str
+    description: Optional[str] = None
+    lesson_type: str
+    content_text: Optional[str] = None
+    content_url: Optional[str] = None
+    duration_seconds: Optional[int] = None
+    order_index: int
+    is_preview: bool
+    is_published: bool
     created_at: datetime
+    updated_at: datetime
 
-    class Config:
-        from_attributes = True
-
-SectionCreate = ModuleCreate
-SectionUpdate = ModuleUpdate
-SectionRead = Module
-LessonRead = Lesson
+    model_config = ConfigDict(from_attributes=True)
