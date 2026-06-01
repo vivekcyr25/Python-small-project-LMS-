@@ -27,27 +27,16 @@ const InstructorDashboard = () => {
 
   const container = {
     hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
-
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: { opacity: 1, y: 0 },
   };
 
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="space-y-8"
-    >
-      {/* Hero Card */}
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
+      {/* Hero */}
       <motion.div variants={item}>
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-violet-600/20 to-indigo-600/20 border border-white/10 p-8">
           <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl -z-10" />
@@ -67,7 +56,7 @@ const InstructorDashboard = () => {
         </div>
       </motion.div>
 
-      {/* Stats Cards */}
+      {/* Stats */}
       <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="glass-card p-6 flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-400">
@@ -98,12 +87,12 @@ const InstructorDashboard = () => {
         </Card>
       </motion.div>
 
-      {/* Course List */}
+      {/* Course list */}
       <motion.div variants={item}>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-white">My Courses</h2>
         </div>
-        
+
         {courses?.length === 0 ? (
           <Card className="glass-card p-12 text-center">
             <p className="text-slate-400">You haven't created any courses yet.</p>
@@ -132,31 +121,23 @@ const InstructorDashboard = () => {
                     <div>
                       <p className="text-sm text-slate-400 line-clamp-2 mb-4">{course.description}</p>
                     </div>
-                    <div className="flex space-x-2 mt-auto">
-                      <Link to={`/courses/${course.id}`} className="flex-1">
-                        <Button className="w-full flex items-center justify-center gap-2" variant="glass" size="sm">
-                          <Eye size={14} /> View
+                    <div className="space-y-2 mt-auto">
+                      <Link to={`/instructor/courses/${course.id}/builder`} className="block">
+                        <Button
+                          data-testid={`builder-link-${course.id}`}
+                          className="w-full flex items-center justify-center gap-2"
+                          variant="gradient"
+                          size="sm"
+                        >
+                          <Wrench size={14} /> Open Course Builder
                         </Button>
                       </Link>
-                      <Link to={`/courses/${course.id}/edit`} className="flex-1">
-                        <Button className="w-full flex items-center justify-center gap-2" variant="outline" size="sm">
-                          <Edit size={14} /> Edit
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </motion.div>
-    </motion.div>
-  );
-};
-
-export default InstructorDashboard;
-       </Link>
+                      <div className="flex space-x-2">
+                        <Link to={`/courses/${course.id}`} className="flex-1">
+                          <Button className="w-full flex items-center justify-center gap-2" variant="glass" size="sm">
+                            <Eye size={14} /> View
+                          </Button>
+                        </Link>
                         <Link to={`/courses/${course.id}/edit`} className="flex-1">
                           <Button className="w-full flex items-center justify-center gap-2" variant="outline" size="sm">
                             <Edit size={14} /> Metadata
