@@ -22,7 +22,7 @@ from app.db.base import Base
 from app.models.user import User
 from app.models.course import Course
 from app.models.enrollment import Enrollment
-from app.models.content import Module, Lesson
+from app.models.content import Section, Lesson
 from app.models.assessment import LessonProgress, Quiz, Question, AnswerOption, QuizAttempt, QuizAttemptAnswer, Certificate
 
 target_metadata = Base.metadata
