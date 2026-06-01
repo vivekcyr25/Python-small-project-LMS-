@@ -20,19 +20,19 @@ def main() -> None:
     db = SessionLocal()
     try:
         # ── 1. Instructor account ──
-        instructor = db.query(User).filter(User.email == "instructor@aurora.lms").first()
+        instructor = db.query(User).filter(User.email == "viveklpu008@gmail.com").first()
         if not instructor:
             instructor = User(
-                email="instructor@aurora.lms",
-                full_name="Aurora Instructor",
-                hashed_password=get_password_hash("instructor123"),
+                email="viveklpu008@gmail.com",
+                full_name="Vivek Kumar",
+                hashed_password=get_password_hash("@Vivek60"),
                 role=UserRole.INSTRUCTOR.value,
                 is_active=True,
             )
             db.add(instructor)
             db.commit()
             db.refresh(instructor)
-            print(f"[+] Created instructor (id={instructor.id}, password=instructor123)")
+            print(f"[+] Created instructor (id={instructor.id}, email=viveklpu008@gmail.com, password=@Vivek60)")
         else:
             print(f"[=] Instructor already exists (id={instructor.id})")
 
@@ -241,3 +241,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+main()

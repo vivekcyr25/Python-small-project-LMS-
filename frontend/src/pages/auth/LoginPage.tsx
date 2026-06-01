@@ -7,13 +7,23 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import useAuthStore from '../../stores/authStore';
 import api from '../../lib/api';
 import { motion } from 'framer-motion';
-import { Sparkles, LogIn } from 'lucide-react';
+import { Sparkles, LogIn, GraduationCap, BookOpen, ShieldCheck } from 'lucide-react';
 import GoogleLoginButton from '../../components/auth/GoogleLoginButton';
 import { isFirebaseMockMode } from '../../lib/firebase';
+import { cn } from '../../lib/utils';
+
+type LoginRole = 'student' | 'instructor' | 'admin';
+
+const ROLE_TABS: { key: LoginRole; label: string; Icon: any }[] = [
+  { key: 'student',    label: 'Student',    Icon: GraduationCap },
+  { key: 'instructor', label: 'Instructor', Icon: BookOpen },
+  { key: 'admin',      label: 'Admin',      Icon: ShieldCheck },
+];
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<LoginRole>('student');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -37,12 +47,22 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { access_token, user } = response.data;
+      const { access_token, user: u } = response.data;
+
+      // Enforce that the account's actual role matches what was chosen.
+      if (u.role !== role) {
+        setError(
+          `This account is a ${u.role}, not a ${role}. Please pick the right role tab.`
+        );
+        setLoading(false);
+        return;
+      }
+
       setToken(access_token);
-      setUser(user);
-      if (user.role === 'student') navigate('/student/dashboard');
-      else if (user.role === 'instructor') navigate('/instructor/dashboard');
-      else if (user.role === 'admin') navigate('/admin/dashboard');
+      setUser(u);
+      if (u.role === 'student') navigate('/student/dashboard');
+      else if (u.role === 'instructor') navigate('/instructor/dashboard');
+      else if (u.role === 'admin') navigate('/admin/dashboard');
       else navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to login');
@@ -75,6 +95,30 @@ const LoginPage = () => {
           </CardHeader>
 
           <CardContent className="space-y-5">
+            {/* ── Role selector ── */}
+            <div data-testid="role-selector" className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-black/30 border border-white/10">
+              {ROLE_TABS.map(({ key, label, Icon }) => {
+                const active = role === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    data-testid={`role-${key}`}
+                    onClick={() => setRole(key)}
+                    className={cn(
+                      'relative flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all',
+                      active
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/30'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5',
+                    )}
+                  >
+                    <Icon size={14} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* ── Email / Password form ── */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -113,20 +157,17 @@ const LoginPage = () => {
                 disabled={loading}
               >
                 <LogIn size={16} />
-                {loading ? 'Logging in...' : 'Login'}
+                {loading ? 'Logging in...' : `Login as ${ROLE_TABS.find(r => r.key === role)?.label}`}
               </Button>
             </form>
 
-            {/* OAuth outside form — prevents accidental form submit / page reload */}
+            {/* OAuth outside form */}
             <div className="space-y-5">
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-white/10" />
                 <span className="text-xs text-slate-500 whitespace-nowrap">or continue with</span>
                 <div className="flex-1 h-px bg-white/10" />
               </div>
-
-
-
               <GoogleLoginButton />
             </div>
           </CardContent>
