@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BookOpen, PlusCircle, BarChart3, Edit, Eye, Sparkles } from 'lucide-react';
+import { BookOpen, PlusCircle, BarChart3, Edit, Eye, Sparkles, Wrench } from 'lucide-react';
 
 const InstructorDashboard = () => {
   const { data: courses, isLoading } = useQuery({
@@ -143,6 +143,26 @@ const InstructorDashboard = () => {
                           <Edit size={14} /> Edit
                         </Button>
                       </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default InstructorDashboard;
+       </Link>
+                        <Link to={`/courses/${course.id}/edit`} className="flex-1">
+                          <Button className="w-full flex items-center justify-center gap-2" variant="outline" size="sm">
+                            <Edit size={14} /> Metadata
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
