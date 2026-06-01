@@ -25,18 +25,39 @@ def main() -> None:
             instructor = User(
                 email="viveklpu008@gmail.com",
                 full_name="Vivek Kumar",
-                hashed_password=get_password_hash("@Vivek60"),
+                hashed_password=get_password_hash("@Vivek50"),
                 role=UserRole.INSTRUCTOR.value,
                 is_active=True,
             )
             db.add(instructor)
             db.commit()
             db.refresh(instructor)
-            print(f"[+] Created instructor (id={instructor.id}, email=viveklpu008@gmail.com, password=@Vivek60)")
+            print(f"[+] Created instructor (id={instructor.id}, email=viveklpu008@gmail.com, password=@Vivek50)")
         else:
-            print(f"[=] Instructor already exists (id={instructor.id})")
+            instructor.hashed_password = get_password_hash("@Vivek50")
+            db.commit()
+            print(f"[=] Instructor already exists (id={instructor.id}), password updated")
 
-        # ── 2. Student account ──
+        # ── 2. Admin account ──
+        admin = db.query(User).filter(User.email == "admin@aurora.lms").first()
+        if not admin:
+            admin = User(
+                email="admin@aurora.lms",
+                full_name="Aurora Admin",
+                hashed_password=get_password_hash("@Vivek60"),
+                role=UserRole.ADMIN.value,
+                is_active=True,
+            )
+            db.add(admin)
+            db.commit()
+            db.refresh(admin)
+            print(f"[+] Created admin (id={admin.id}, email=admin@aurora.lms, password=@Vivek60)")
+        else:
+            admin.hashed_password = get_password_hash("@Vivek60")
+            db.commit()
+            print(f"[=] Admin already exists (id={admin.id}), password updated")
+
+        # ── 3. Student account ──
         student = db.query(User).filter(User.email == "student@aurora.lms").first()
         if not student:
             student = User(
@@ -231,7 +252,8 @@ def main() -> None:
         print()
         print("====================================")
         print(" Demo logins:")
-        print("   instructor@aurora.lms / instructor123")
+        print("   viveklpu008@gmail.com / @Vivek50  (instructor)")
+        print("   admin@aurora.lms      / @Vivek60  (admin)")
         print("   student@aurora.lms    / student123")
         print(" Course: React Foundations with Aurora")
         print("====================================")
