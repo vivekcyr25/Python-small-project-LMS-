@@ -161,15 +161,23 @@ const LoginPage = () => {
               </Button>
             </form>
 
-            {/* OAuth outside form */}
-            <div className="space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-white/10" />
-                <span className="text-xs text-slate-500 whitespace-nowrap">or continue with</span>
-                <div className="flex-1 h-px bg-white/10" />
+            {/* OAuth — Student only (Google for instructor/admin is disabled by policy) */}
+            {role === 'student' && (
+              <div className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-white/10" />
+                  <span className="text-xs text-slate-500 whitespace-nowrap">or continue with</span>
+                  <div className="flex-1 h-px bg-white/10" />
+                </div>
+                <GoogleLoginButton />
               </div>
-              <GoogleLoginButton />
-            </div>
+            )}
+
+            {role !== 'student' && (
+              <p className="text-[11px] text-slate-500 text-center pt-1">
+                Google sign-in is available for students only. {role === 'instructor' ? 'Instructors' : 'Admins'} use email + password.
+              </p>
+            )}
           </CardContent>
 
           <CardFooter className="justify-center">
