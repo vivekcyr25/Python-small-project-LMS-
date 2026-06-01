@@ -19,6 +19,7 @@ from app.models.assessment import (  # noqa: F401
     QuizAttemptAnswer,
     Certificate,
 )
+from app.scripts.seed_demo_course import seed_default_users
 
 app = FastAPI(title="LMS API", version="1.0.0")
 
@@ -63,6 +64,7 @@ async def catch_exceptions_middleware(request: Request, call_next):
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
+    seed_default_users()
 
 
 app.include_router(api_router, prefix="/api/v1")

@@ -14,6 +14,46 @@ from app.models.assessment import Quiz, Question, AnswerOption
 from app.core.security import get_password_hash
 
 
+def seed_default_users() -> None:
+    db = SessionLocal()
+    try:
+        instructor = db.query(User).filter(User.email == "viveklpu008@gmail.com").first()
+        if instructor is None:
+            instructor = User(
+                email="viveklpu008@gmail.com",
+                full_name="Vivek Kumar",
+                hashed_password=get_password_hash("@Vivek50"),
+                role=UserRole.INSTRUCTOR.value,
+                is_active=True,
+            )
+            db.add(instructor)
+        else:
+            instructor.full_name = "Vivek Kumar"
+            instructor.hashed_password = get_password_hash("@Vivek50")
+            instructor.role = UserRole.INSTRUCTOR.value
+            instructor.is_active = True
+
+        admin = db.query(User).filter(User.email == "admin@aurora.lms").first()
+        if admin is None:
+            admin = User(
+                email="admin@aurora.lms",
+                full_name="Aurora Admin",
+                hashed_password=get_password_hash("@Vivek60"),
+                role=UserRole.ADMIN.value,
+                is_active=True,
+            )
+            db.add(admin)
+        else:
+            admin.full_name = "Aurora Admin"
+            admin.hashed_password = get_password_hash("@Vivek60")
+            admin.role = UserRole.ADMIN.value
+            admin.is_active = True
+
+        db.commit()
+    finally:
+        db.close()
+
+
 def main() -> None:
     # Ensure schema exists when running against SQLite dev DB
     Base.metadata.create_all(bind=engine)
