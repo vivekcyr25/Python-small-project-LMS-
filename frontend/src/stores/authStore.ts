@@ -6,6 +6,10 @@ interface User {
   full_name: string;
   role: string;
   is_active: boolean;
+  photo_url?: string | null;
+  firebase_uid?: string | null;
+  auth_provider?: string | null;
+  email_verified?: boolean;
 }
 
 interface AuthState {

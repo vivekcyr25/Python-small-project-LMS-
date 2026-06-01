@@ -113,11 +113,14 @@ def firebase_login(body: FirebaseLoginRequest, db: Session = Depends(get_db)):
             user.firebase_uid = uid
         if not user.auth_provider:
             user.auth_provider = provider
+        # Refresh name and photo from latest Google profile on every login.
+        if name:
+            user.full_name = name
+        if picture:
+            user.photo_url = picture
         # Safely update optional fields — never overwrite role.
         if phone_number and not user.phone_number:
             user.phone_number = phone_number
-        if picture and not user.photo_url:
-            user.photo_url = picture
         if email_verified and not user.email_verified:
             user.email_verified = email_verified
         db.commit()

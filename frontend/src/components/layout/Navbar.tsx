@@ -40,14 +40,23 @@ const Navbar = () => {
         </div>
         
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3">
+          {user?.photo_url ? (
+            <img
+              src={user.photo_url}
+              alt={user.full_name || 'User'}
+              referrerPolicy="no-referrer"
+              className="w-9 h-9 rounded-full object-cover border border-white/20"
+            />
+          ) : (
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-medium text-sm">
               {user?.full_name ? getInitials(user.full_name) : <UserIcon size={16} />}
             </div>
-            <span className="text-sm font-medium text-white hidden md:inline">
-              {user?.full_name || 'User'}
-            </span>
-          </div>
+          )}
+          <span className="text-sm font-medium text-white hidden md:inline">
+            {user?.full_name || 'User'}
+          </span>
+        </div>
           
           <Button variant="glass" size="sm" onClick={handleLogout} className="flex items-center gap-2">
             <LogOut size={14} />
