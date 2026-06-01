@@ -6,10 +6,9 @@ import { Input } from '../../components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../components/ui/card';
 import useAuthStore from '../../stores/authStore';
 import api from '../../lib/api';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, LogIn, Phone, ChevronDown } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Sparkles, LogIn } from 'lucide-react';
 import GoogleLoginButton from '../../components/auth/GoogleLoginButton';
-import PhoneOtpLogin from '../../components/auth/PhoneOtpLogin';
 import { isFirebaseMockMode } from '../../lib/firebase';
 
 const LoginPage = () => {
@@ -17,7 +16,6 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPhoneOtp, setShowPhoneOtp] = useState(false);
 
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.token);
@@ -130,40 +128,6 @@ const LoginPage = () => {
 
 
               <GoogleLoginButton />
-
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setShowPhoneOtp((v) => !v)}
-                  className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition-colors py-1"
-                >
-                  <Phone size={14} />
-                  Login with Phone OTP
-                  <motion.span
-                    animate={{ rotate: showPhoneOtp ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChevronDown size={14} />
-                  </motion.span>
-                </button>
-
-                <AnimatePresence>
-                  {showPhoneOtp && (
-                    <motion.div
-                      key="phone-otp"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="pt-4">
-                        <PhoneOtpLogin />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
             </div>
           </CardContent>
 

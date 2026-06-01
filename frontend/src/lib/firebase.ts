@@ -21,7 +21,7 @@ export function isFirebaseMockMode(): boolean {
   return !apiKey || PLACEHOLDER_API_KEYS.has(apiKey);
 }
 
-/** True when real Firebase client SDK should be used (Google popup, Phone OTP). */
+/** True when real Firebase client SDK should be used (Google popup). */
 export function isFirebaseConfigured(): boolean {
   return !isFirebaseMockMode();
 }

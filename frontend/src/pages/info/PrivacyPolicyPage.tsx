@@ -26,7 +26,7 @@ const PrivacyPolicyPage = () => {
     {
       icon: Lock,
       title: 'Authentication Infrastructure',
-      description: 'Aurora LMS integrates with Firebase Authentication to handle OAuth Google Sign-in and Phone OTP. Firebase secures these operations, and only verification hashes are exchanged with our backend. In development/mock mode, credentials remain entirely local to your sandbox.',
+      description: 'Aurora LMS integrates with Firebase Authentication to handle OAuth Google Sign-in. Firebase secures these operations, and only verification hashes are exchanged with our backend. In development/mock mode, credentials remain entirely local to your sandbox.',
     },
     {
       icon: Database,

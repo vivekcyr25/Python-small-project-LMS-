@@ -46,7 +46,7 @@ const SourcesPage = () => {
     {
       icon: ShieldCheck,
       title: 'Firebase Services',
-      description: 'Firebase Authentication SDK. Orchestrates Google OAuth identity verification and SMS Phone OTP validations, ensuring industry-standard security.',
+      description: 'Firebase Authentication SDK. Orchestrates Google OAuth identity verification, ensuring industry-standard security.',
     },
   ];
 
