@@ -36,27 +36,40 @@ const PhoneOtpLogin: React.FC = () => {
   // Cleanup reCAPTCHA on unmount to avoid memory leaks / duplicate widgets.
   useEffect(() => {
     return () => {
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = undefined;
-      }
+      clearRecaptcha();
     };
   }, []);
 
-  const setupRecaptcha = () => {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        getFirebaseAuth(),
-        'recaptcha-container',
-        {
-          size: 'invisible',
-          callback: () => { /* reCAPTCHA solved */ },
-          'expired-callback': () => {
-            setError('reCAPTCHA expired. Please try again.');
-          },
-        }
-      );
+  const clearRecaptcha = () => {
+    try {
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+      }
+    } catch {
+      // ignore — verifier may already be cleared
     }
+    window.recaptchaVerifier = undefined;
+    // Also wipe the DOM container — Firebase leaves an iframe behind,
+    // which causes "reCAPTCHA has already been rendered in this element"
+    // on the next attempt.
+    const container = document.getElementById('recaptcha-container');
+    if (container) container.innerHTML = '';
+  };
+
+  const setupRecaptcha = () => {
+    // Always create a fresh verifier — never reuse across attempts.
+    clearRecaptcha();
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      getFirebaseAuth(),
+      'recaptcha-container',
+      {
+        size: 'invisible',
+        callback: () => { /* reCAPTCHA solved */ },
+        'expired-callback': () => {
+          setError('reCAPTCHA expired. Please try again.');
+        },
+      }
+    );
     return window.recaptchaVerifier;
   };
 
@@ -92,10 +105,7 @@ const PhoneOtpLogin: React.FC = () => {
       setStep('otp');
     } catch (err: any) {
       // Recreate reCAPTCHA on error so the user can retry.
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = undefined;
-      }
+      clearRecaptcha();
       const code = err?.code || '';
       if (code === 'auth/invalid-phone-number') {
         setError('Invalid phone number. Use international format: +91XXXXXXXXXX');
@@ -165,10 +175,7 @@ const PhoneOtpLogin: React.FC = () => {
     setOtp('');
     setError('');
     confirmationRef.current = null;
-    if (window.recaptchaVerifier) {
-      window.recaptchaVerifier.clear();
-      window.recaptchaVerifier = undefined;
-    }
+    clearRecaptcha();
   };
 
   return (
