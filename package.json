@@ -1,0 +1,11 @@
+{
+  "name": "library-management-system-root",
+  "version": "1.0.0",
+  "description": "Root package.json to proxy scripts to frontend and backend",
+  "scripts": {
+    "dev": "npm run dev --prefix Python-small-project-LMS--main/frontend",
+    "start": "npm run dev --prefix Python-small-project-LMS--main/frontend",
+    "build": "npm run build --prefix Python-small-project-LMS--main/frontend",
+    "install-all": "npm install --prefix Python-small-project-LMS--main/frontend"
+  }
+}
