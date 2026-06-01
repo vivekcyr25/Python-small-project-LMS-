@@ -16,7 +16,7 @@ const MaintenancePage = () => {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
             <Sparkles size={16} className="text-white" />
           </div>
-          <span className="text-lg font-bold tracking-tight text-white">Aurora LMS</span>
+          <span className="text-lg font-bold tracking-tight text-white">AIPS LMS</span>
         </div>
         <div className="flex items-center gap-2 text-xs text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full font-medium">
           <Hammer size={12} className="animate-bounce" /> System Mode: Maintenance
@@ -82,7 +82,7 @@ const MaintenancePage = () => {
       {/* Footer (Bottom) */}
       <footer className="relative z-10 text-center max-w-7xl w-full mx-auto">
         <p className="text-[10px] md:text-xs text-slate-600 font-mono uppercase tracking-widest">
-          &copy; 2026 Aurora LMS. Security Code: 503-DEV
+          &copy; 2026 AIPS LMS. Security Code: 503-DEV
         </p>
       </footer>
     </div>

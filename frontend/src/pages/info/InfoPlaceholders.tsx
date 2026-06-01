@@ -70,10 +70,7 @@ export const QuizzesPage = () => {
 // 2. CERTIFICATES PAGE (WWDC WALLET STYLE)
 // -------------------------------------------------------------
 export const CertificatesPage = () => {
-  const certs = [
-    { id: 1, title: 'Learning C Programming Fundamentals', instructor: 'Vivek Kumar', date: 'May 2026', code: 'AIPS-C-5912A' },
-    { id: 2, title: 'Python Automation & Scripting API', instructor: 'Vivek Kumar', date: 'April 2026', code: 'AIPS-PY-9213B' },
-  ];
+  const certs = [];
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto py-4 relative z-20">
@@ -85,31 +82,39 @@ export const CertificatesPage = () => {
         <p className="text-slate-300 mt-2 text-base">Access and download your verified course credentials.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {certs.map((cert) => (
-          <motion.div key={cert.id} initial="hidden" animate="show" variants={itemVariants}>
-            <Card className="glass-card p-6 h-full border border-white/10 bg-gradient-to-br from-purple-950/20 to-pink-950/10 flex flex-col justify-between relative overflow-hidden group">
-              <div className="absolute -right-12 -bottom-12 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl group-hover:scale-125 transition-all duration-500" />
-              <div className="space-y-4">
-                <div className="flex justify-between items-start">
-                  <Award size={28} className="text-purple-400" />
-                  <span className="text-[9px] font-mono tracking-widest text-slate-500">{cert.code}</span>
+      {certs.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16">
+          <Award size={48} className="text-slate-600 mb-4" />
+          <p className="text-slate-400 text-lg font-semibold">No certificates earned yet</p>
+          <p className="text-slate-500 text-sm mt-1">Complete courses to earn certificates</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {certs.map((cert) => (
+            <motion.div key={cert.id} initial="hidden" animate="show" variants={itemVariants}>
+              <Card className="glass-card p-6 h-full border border-white/10 bg-gradient-to-br from-purple-950/20 to-pink-950/10 flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute -right-12 -bottom-12 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl group-hover:scale-125 transition-all duration-500" />
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start">
+                    <Award size={28} className="text-purple-400" />
+                    <span className="text-[9px] font-mono tracking-widest text-slate-500">{cert.code}</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white leading-snug">{cert.title}</h3>
+                    <p className="text-xs text-slate-400 mt-1">Instructor: {cert.instructor}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white leading-snug">{cert.title}</h3>
-                  <p className="text-xs text-slate-400 mt-1">Instructor: {cert.instructor}</p>
+                <div className="mt-8 pt-4 border-t border-white/5 flex justify-between items-center text-xs">
+                  <span className="text-slate-400">Issued: {cert.date}</span>
+                  <button className="text-purple-400 hover:text-purple-300 flex items-center gap-1 font-bold">
+                    View <ExternalLink size={12} />
+                  </button>
                 </div>
-              </div>
-              <div className="mt-8 pt-4 border-t border-white/5 flex justify-between items-center text-xs">
-                <span className="text-slate-400">Issued: {cert.date}</span>
-                <button className="text-purple-400 hover:text-purple-300 flex items-center gap-1 font-bold">
-                  View <ExternalLink size={12} />
-                </button>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -177,10 +182,7 @@ export const DiscussionsPage = () => {
 // 4. BOOKMARKS PAGE
 // -------------------------------------------------------------
 export const BookmarksPage = () => {
-  const bookmarks = [
-    { id: 1, title: 'Understanding Addresses & & Operator', course: 'Advanced C: Pointers & Algorithms', type: 'Lesson' },
-    { id: 2, title: 'Setting Up GCC & Clang Compilers', course: 'Learning C Programming', type: 'Lesson' },
-  ];
+  const bookmarks = [];
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto py-4 relative z-20">
@@ -192,29 +194,37 @@ export const BookmarksPage = () => {
         <p className="text-slate-300 mt-2 text-base">Access your pinned lectures, notes, and topics.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {bookmarks.map((bookmark) => (
-          <motion.div key={bookmark.id} initial="hidden" animate="show" variants={itemVariants}>
-            <Card className="glass-card p-6 h-full border border-white/10 flex flex-col justify-between hover:border-emerald-500/30">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-                    {bookmark.type}
-                  </span>
-                  <Bookmark size={16} className="text-emerald-400 fill-emerald-400/20" />
+      {bookmarks.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16">
+          <Bookmark size={48} className="text-slate-600 mb-4" />
+          <p className="text-slate-400 text-lg font-semibold">No bookmarks yet</p>
+          <p className="text-slate-500 text-sm mt-1">Bookmark lessons to access them quickly</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {bookmarks.map((bookmark) => (
+            <motion.div key={bookmark.id} initial="hidden" animate="show" variants={itemVariants}>
+              <Card className="glass-card p-6 h-full border border-white/10 flex flex-col justify-between hover:border-emerald-500/30">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                      {bookmark.type}
+                    </span>
+                    <Bookmark size={16} className="text-emerald-400 fill-emerald-400/20" />
+                  </div>
+                  <h3 className="text-base font-bold text-white">{bookmark.title}</h3>
+                  <p className="text-xs text-slate-400">{bookmark.course}</p>
                 </div>
-                <h3 className="text-base font-bold text-white">{bookmark.title}</h3>
-                <p className="text-xs text-slate-400">{bookmark.course}</p>
-              </div>
-              <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
-                <button className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
-                  Resume <ChevronRight size={12} />
-                </button>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+                <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
+                  <button className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1">
+                    Resume <ChevronRight size={12} />
+                  </button>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -25,11 +25,11 @@ const ProfilePage = () => {
   const setUser = useAuthStore((state) => state.setUser);
 
   // Form states
-  const [fullName, setFullName] = useState(user?.full_name || 'Vivek Sharma');
-  const [email] = useState(user?.email || 'vivek@lpu.in');
-  const [bio, setBio] = useState('Passionate about building products that make learning smarter and better.');
-  const [location, setLocation] = useState('Punjab, India');
-  const [website, setWebsite] = useState('https://vivek.dev');
+  const [fullName, setFullName] = useState(user?.full_name || '');
+  const [email] = useState(user?.email || '');
+  const [bio, setBio] = useState('');
+  const [location, setLocation] = useState('');
+  const [website, setWebsite] = useState('');
   
   // Settings states
   const [showPasswordModal, setShowPasswordModal] = useState(false);
