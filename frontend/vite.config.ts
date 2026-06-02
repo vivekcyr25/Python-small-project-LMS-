@@ -7,12 +7,13 @@ export default defineConfig({
   base: process.env.GITHUB_ACTIONS ? '/Python-small-project-LMS-/' : '/',
   server: {
     host: '0.0.0.0',
-    port: 3000,
-    strictPort: true,
+    port: 5173,
+    strictPort: false,
     allowedHosts: true,
     hmr: {
-      protocol: 'wss',
-      clientPort: 443,
+      protocol: 'ws',
+      host: 'localhost',
+      port: 5173,
     },
   },
 })
