@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { getMyEnrollments } from '../../features/enrollments/api';
 import { getCourses } from '../../features/courses/api';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
+import { getCourseProgress, type CourseProgressSummary } from '../../features/progress/api';
+import { Card } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -11,15 +12,23 @@ import {
   Award, 
   Clock, 
   ArrowRight, 
-  Sparkles,
   TrendingUp,
   Play,
   ClipboardList,
   Users,
   Compass,
-  Rocket
+  Rocket,
+  Lock
 } from 'lucide-react';
 import useAuthStore from '../../stores/authStore';
+
+type Course = {
+  id: number;
+  title: string;
+  description?: string | null;
+  thumbnail_url?: string | null;
+  level?: string | null;
+};
 
 const StudentDashboard = () => {
   const user = useAuthStore((state) => state.user);
@@ -38,6 +47,56 @@ const StudentDashboard = () => {
     (enrollments
       ?.map((e: any) => courses?.find((c: any) => c.id === e.course_id))
       .filter(Boolean) as any[]) || [];
+
+  const progressQueries = useQueries({
+    queries: enrolledCourses.map((course: Course) => ({
+      queryKey: ['course-progress', course.id],
+      queryFn: () => getCourseProgress(course.id),
+      enabled: Boolean(course.id),
+    })),
+  });
+
+  const progressByCourseId = new Map<number, CourseProgressSummary>();
+  enrolledCourses.forEach((course: Course, index: number) => {
+    progressByCourseId.set(
+      course.id,
+      progressQueries[index]?.data || { completed_lessons: 0, total_lessons: 0, progress_percent: 0 },
+    );
+  });
+
+  const totalLessons = enrolledCourses.reduce((sum: number, course: Course) => {
+    return sum + (progressByCourseId.get(course.id)?.total_lessons || 0);
+  }, 0);
+
+  const completedLessons = enrolledCourses.reduce((sum: number, course: Course) => {
+    return sum + (progressByCourseId.get(course.id)?.completed_lessons || 0);
+  }, 0);
+
+  const overallProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+  const certificatesEarned = enrolledCourses.filter((course: Course) => {
+    const progress = progressByCourseId.get(course.id);
+    return progress && progress.total_lessons > 0 && progress.progress_percent >= 100;
+  }).length;
+  const progressLoading = progressQueries.some((query) => query.isLoading);
+  const dashboardLoading = loadingEnrollments || loadingCourses || progressLoading;
+
+  const sortedEnrolledCourses = [...enrolledCourses].sort((a: Course, b: Course) => {
+    const aProgress = progressByCourseId.get(a.id)?.progress_percent || 0;
+    const bProgress = progressByCourseId.get(b.id)?.progress_percent || 0;
+    if (aProgress === bProgress) return a.title.localeCompare(b.title);
+    return bProgress - aProgress;
+  });
+  const continueCourse = sortedEnrolledCourses.find((course: Course) => {
+    const progress = progressByCourseId.get(course.id);
+    return progress && progress.progress_percent < 100;
+  }) || sortedEnrolledCourses[0];
+  const continueProgress = continueCourse
+    ? progressByCourseId.get(continueCourse.id) || { completed_lessons: 0, total_lessons: 0, progress_percent: 0 }
+    : null;
+  const continuePercent = continueProgress?.progress_percent || 0;
+  const nextLessonText = continueProgress && continueProgress.total_lessons > 0
+    ? `${continueProgress.completed_lessons} of ${continueProgress.total_lessons} lessons completed`
+    : 'No lesson progress yet';
 
   const container = {
     hidden: { opacity: 0 },
@@ -59,7 +118,7 @@ const StudentDashboard = () => {
       <motion.div variants={item} className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-extrabold text-white flex items-center gap-2">
-            Welcome back, <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{getFirstName(user?.full_name || 'Vivek')}</span> 👋
+            Welcome back, <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{getFirstName(user?.full_name || '')}</span>
           </h1>
           <p className="text-slate-400 mt-1.5 text-sm">Continue your learning journey with AIPS LMS.</p>
         </div>
@@ -74,7 +133,7 @@ const StudentDashboard = () => {
             <BookOpen size={20} />
           </div>
           <div>
-            <p className="text-2xl font-black text-white">{enrolledCourses.length || 8}</p>
+            <p className="text-2xl font-black text-white">{dashboardLoading ? '...' : enrolledCourses.length}</p>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Courses Enrolled</p>
           </div>
         </Card>
@@ -85,7 +144,7 @@ const StudentDashboard = () => {
             <TrendingUp size={20} />
           </div>
           <div>
-            <p className="text-2xl font-black text-white">64%</p>
+            <p className="text-2xl font-black text-white">{dashboardLoading ? '...' : `${overallProgress}%`}</p>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Overall Progress</p>
           </div>
         </Card>
@@ -96,7 +155,7 @@ const StudentDashboard = () => {
             <Clock size={20} />
           </div>
           <div>
-            <p className="text-2xl font-black text-white">15</p>
+            <p className="text-2xl font-black text-white">{dashboardLoading ? '...' : completedLessons}</p>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Lessons Completed</p>
           </div>
         </Card>
@@ -107,7 +166,7 @@ const StudentDashboard = () => {
             <Award size={20} />
           </div>
           <div>
-            <p className="text-2xl font-black text-white">4</p>
+            <p className="text-2xl font-black text-white">{dashboardLoading ? '...' : certificatesEarned}</p>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Certificates Earned</p>
           </div>
         </Card>
@@ -128,35 +187,35 @@ const StudentDashboard = () => {
                 <span className="text-[9px] font-extrabold uppercase tracking-wider text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-0.5 rounded-full">
                   Continue Learning
                 </span>
-                <h3 className="text-xl font-bold text-white mt-3">Python for Beginners</h3>
-                <p className="text-xs text-slate-400 mt-1">Lesson 7: Loops & Iterations</p>
+                <h3 className="text-xl font-bold text-white mt-3">
+                  {continueCourse ? continueCourse.title : 'No active course yet'}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {continueCourse ? nextLessonText : 'Enroll in a course to start learning.'}
+                </p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" 
-                  alt="Python" 
-                  className="w-6 h-6 object-contain"
-                />
+                <BookOpen size={22} className="text-blue-300" />
               </div>
             </div>
 
             <div className="mt-8 space-y-4">
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-400 font-medium">Course Progress</span>
-                <span className="text-blue-400 font-bold">68%</span>
+                <span className="text-blue-400 font-bold">{continuePercent}%</span>
               </div>
               {/* iOS style progress bar */}
               <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden border border-white/5">
-                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full" style={{ width: '68%' }} />
+                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full" style={{ width: `${continuePercent}%` }} />
               </div>
 
               <div className="flex items-center gap-3 pt-2">
-                <Link to="/courses" className="flex-1">
+                <Link to={continueCourse ? `/courses/${continueCourse.id}/learn` : '/courses'} className="flex-1">
                   <Button variant="gradient" className="w-full btn-premium py-2.5 text-xs font-semibold rounded-xl flex items-center justify-center gap-2">
-                    <Play size={12} fill="white" /> Resume Learning
+                    <Play size={12} fill="white" /> {continueCourse ? 'Resume Learning' : 'Browse Courses'}
                   </Button>
                 </Link>
-                <Link to="/courses">
+                <Link to={continueCourse ? `/courses/${continueCourse.id}` : '/courses'}>
                   <button className="p-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all">
                     <ArrowRight size={14} className="text-white" />
                   </button>
@@ -236,18 +295,22 @@ const StudentDashboard = () => {
                   <Compass size={18} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Data Structures in C++</h4>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Last viewed 2h ago</p>
+                  <h4 className="text-sm font-bold text-white">
+                    {continueCourse ? continueCourse.title : 'No recent course'}
+                  </h4>
+                  <p className="text-[10px] text-slate-500 mt-0.5">
+                    {continueCourse ? 'Based on your enrolled courses' : 'Start a course to fill this in'}
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-1.5 pt-2">
                 <div className="flex justify-between items-center text-[10px] text-slate-500 font-bold">
                   <span>Progress</span>
-                  <span>45% Completed</span>
+                  <span>{continuePercent}% Completed</span>
                 </div>
                 <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
-                  <div className="bg-blue-500 h-full rounded-full" style={{ width: '45%' }} />
+                  <div className="bg-blue-500 h-full rounded-full" style={{ width: `${continuePercent}%` }} />
                 </div>
               </div>
             </div>
@@ -261,8 +324,8 @@ const StudentDashboard = () => {
             
             <div className="flex items-center justify-between gap-4 mt-3">
               <div>
-                <p className="text-3xl font-black text-white">7</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Days in a row! 🔥</p>
+                <p className="text-3xl font-black text-white">{certificatesEarned}</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Completed courses</p>
               </div>
               
               {/* iOS Circle Progress indicator */}
@@ -277,7 +340,7 @@ const StudentDashboard = () => {
                   />
                   <path
                     className="text-gradient-to-r from-amber-500 to-orange-500"
-                    strokeDasharray="75, 100"
+                    strokeDasharray={`${overallProgress}, 100`}
                     strokeWidth="3.5"
                     strokeLinecap="round"
                     stroke="url(#gradient)"
@@ -292,9 +355,15 @@ const StudentDashboard = () => {
                   </defs>
                 </svg>
                 <div className="absolute text-center">
-                  <span className="text-[10px] font-black text-white">75%</span>
+                  <span className="text-[10px] font-black text-white">{overallProgress}%</span>
                 </div>
               </div>
+              {certificatesEarned === 0 && (
+                <div className="mt-3 flex items-center gap-2 text-[10px] text-slate-500">
+                  <Lock size={12} />
+                  Certificates unlock only at 100% course completion.
+                </div>
+              )}
             </div>
           </Card>
         </motion.div>
