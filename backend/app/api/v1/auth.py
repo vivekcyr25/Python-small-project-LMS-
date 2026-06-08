@@ -66,7 +66,8 @@ def firebase_login(body: FirebaseLoginRequest, db: Session = Depends(get_db)):
     The endpoint:
     - Verifies the Firebase token server-side (never trusts the client).
     - Creates a local user (role=student) if none exists.
-    - Never downgrades or overwrites an existing user's role.
+    - Keeps Google/Firebase sign-in student-only.
+    - Never downgrades or overwrites an existing staff user's role.
     - Never creates an admin via this endpoint.
     - Returns the same JWT shape as /login.
     """
@@ -100,11 +101,24 @@ def firebase_login(body: FirebaseLoginRequest, db: Session = Depends(get_db)):
     if uid:
         user = db.query(User).filter(User.firebase_uid == uid).first()
 
+    # Google login is exposed as a student-only auth path in the UI. If a
+    # Firebase UID was accidentally attached to an instructor/admin account,
+    # detach it and create/reuse a separate student record below. This keeps
+    # email/password staff login untouched.
+    if provider == "google" and user is not None and user.role != UserRole.STUDENT.value:
+        user.firebase_uid = None
+        db.flush()
+        user = None
+
     if user is None and email:
-        user = db.query(User).filter(User.email == email).first()
+        email_user = db.query(User).filter(User.email == email).first()
+        if provider != "google" or email_user is None or email_user.role == UserRole.STUDENT.value:
+            user = email_user
 
     if user is None and phone_number:
-        user = db.query(User).filter(User.phone_number == phone_number).first()
+        phone_user = db.query(User).filter(User.phone_number == phone_number).first()
+        if provider != "google" or phone_user is None or phone_user.role == UserRole.STUDENT.value:
+            user = phone_user
 
     # 4. Update or create local user.
     if user is not None:
@@ -129,9 +143,14 @@ def firebase_login(body: FirebaseLoginRequest, db: Session = Depends(get_db)):
         # Determine a sensible full_name.
         full_name = name or phone_number or email or "Firebase User"
 
-        # Phone-only users have no email — generate a non-loginable placeholder.
-        if email:
+        email_taken = bool(email and db.query(User).filter(User.email == email).first())
+
+        # Phone-only users have no email. Google users may also need an alias
+        # when their Gmail address already belongs to an instructor/admin.
+        if email and not email_taken:
             user_email = email
+        elif provider == "google":
+            user_email = f"google_{uid}@firebase.local"
         else:
             user_email = f"phone_{uid}@firebase.local"
 

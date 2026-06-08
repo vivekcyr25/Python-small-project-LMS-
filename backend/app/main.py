@@ -19,7 +19,8 @@ from app.models.assessment import (  # noqa: F401
     QuizAttemptAnswer,
     Certificate,
 )
-from app.scripts.seed_demo_course import seed_default_users
+# Commented out to fix bcrypt/Python 3.14 compatibility issue
+# from app.scripts.seed_demo_course import seed_default_users
 
 app = FastAPI(title="LMS API", version="1.0.0")
 
@@ -30,6 +31,7 @@ app.add_middleware(
         "https://vivekcyr25.github.io",
         "http://localhost:5173",
         "http://localhost:3000",
+        "http://localhost:3001",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -64,7 +66,8 @@ async def catch_exceptions_middleware(request: Request, call_next):
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
-    seed_default_users()
+    # Disabled seed to fix bcrypt/Python 3.14 compatibility
+    # seed_default_users()
 
 
 app.include_router(api_router, prefix="/api/v1")
