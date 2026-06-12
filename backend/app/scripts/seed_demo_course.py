@@ -59,6 +59,25 @@ def main() -> None:
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
+        # ── 0. Cleanup and migration of old credentials ──
+        old_instructor = db.query(User).filter(User.email == "viveklpu008@gmail.com", User.role == UserRole.INSTRUCTOR.value).first()
+        if old_instructor:
+            old_instructor.email = "instructor@aurora.lms"
+            old_instructor.firebase_uid = None
+            old_instructor.auth_provider = None
+            db.commit()
+            print("[*] Migrated old instructor email to instructor@aurora.lms")
+
+        # Delete conflicting student user
+        old_student = db.query(User).filter(
+            (User.email == "google_c5TXyCvfHdO1qPtj0pRQxy7vhb42@firebase.local") | 
+            (User.firebase_uid == "c5TXyCvfHdO1qPtj0pRQxy7vhb42")
+        ).first()
+        if old_student and old_student.role == UserRole.STUDENT.value:
+            db.delete(old_student)
+            db.commit()
+            print("[*] Deleted old student user from DB")
+
         # ── 1. Instructor account ──
         instructor = db.query(User).filter(User.email == "instructor@aurora.lms").first()
         if not instructor:
