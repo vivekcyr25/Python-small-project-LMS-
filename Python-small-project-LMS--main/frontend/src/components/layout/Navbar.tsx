@@ -101,7 +101,10 @@ const Navbar = () => {
 
             {/* Dropdown Menu Overlay */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-3 w-72 glass-card bg-[#0b1329] border border-white/10 rounded-2xl shadow-2xl p-4 flex flex-col gap-3 z-50 animate-in fade-in slide-in-from-top-3 duration-200">
+              <div 
+                className="absolute right-0 mt-3 w-72 glass-card bg-[#0b1329] border border-white/10 rounded-2xl shadow-2xl p-4 flex flex-col gap-3 z-50 animate-in fade-in slide-in-from-top-3 duration-200"
+                style={{ background: '#0b1329' }}
+              >
                 {/* User Header Profile Card */}
                 <div className="flex items-center gap-3 pb-3 border-b border-white/5">
                   {user?.photo_url ? (

@@ -17,10 +17,10 @@ from app.core.security import get_password_hash
 def seed_default_users() -> None:
     db = SessionLocal()
     try:
-        instructor = db.query(User).filter(User.email == "viveklpu008@gmail.com").first()
+        instructor = db.query(User).filter(User.email == "instructor@aurora.lms").first()
         if instructor is None:
             instructor = User(
-                email="viveklpu008@gmail.com",
+                email="instructor@aurora.lms",
                 full_name="Vivek Kumar",
                 hashed_password=get_password_hash("@Vivek50"),
                 role=UserRole.INSTRUCTOR.value,
@@ -60,10 +60,10 @@ def main() -> None:
     db = SessionLocal()
     try:
         # ── 1. Instructor account ──
-        instructor = db.query(User).filter(User.email == "viveklpu008@gmail.com").first()
+        instructor = db.query(User).filter(User.email == "instructor@aurora.lms").first()
         if not instructor:
             instructor = User(
-                email="viveklpu008@gmail.com",
+                email="instructor@aurora.lms",
                 full_name="Vivek Kumar",
                 hashed_password=get_password_hash("@Vivek50"),
                 role=UserRole.INSTRUCTOR.value,
@@ -72,7 +72,7 @@ def main() -> None:
             db.add(instructor)
             db.commit()
             db.refresh(instructor)
-            print(f"[+] Created instructor (id={instructor.id}, email=viveklpu008@gmail.com, password=@Vivek50)")
+            print(f"[+] Created instructor (id={instructor.id}, email=instructor@aurora.lms, password=@Vivek50)")
         else:
             instructor.hashed_password = get_password_hash("@Vivek50")
             db.commit()
@@ -292,7 +292,7 @@ def main() -> None:
         print()
         print("====================================")
         print(" Demo logins:")
-        print("   viveklpu008@gmail.com / @Vivek50  (instructor)")
+        print("   instructor@aurora.lms / @Vivek50  (instructor)")
         print("   admin@aurora.lms      / @Vivek60  (admin)")
         print("   student@aurora.lms    / student123")
         print(" Course: React Foundations with Aurora")

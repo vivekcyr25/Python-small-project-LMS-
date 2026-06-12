@@ -101,24 +101,13 @@ def firebase_login(body: FirebaseLoginRequest, db: Session = Depends(get_db)):
     if uid:
         user = db.query(User).filter(User.firebase_uid == uid).first()
 
-    # Google login is exposed as a student-only auth path in the UI. If a
-    # Firebase UID was accidentally attached to an instructor/admin account,
-    # detach it and create/reuse a separate student record below. This keeps
-    # email/password staff login untouched.
-    if provider == "google" and user is not None and user.role != UserRole.STUDENT.value:
-        user.firebase_uid = None
-        db.flush()
-        user = None
-
+    # Allow Google/Firebase login for all roles (student, instructor, admin).
+    # This ensures that instructors/staff can log in using Google with their correct email.
     if user is None and email:
-        email_user = db.query(User).filter(User.email == email).first()
-        if provider != "google" or email_user is None or email_user.role == UserRole.STUDENT.value:
-            user = email_user
+        user = db.query(User).filter(User.email == email).first()
 
     if user is None and phone_number:
-        phone_user = db.query(User).filter(User.phone_number == phone_number).first()
-        if provider != "google" or phone_user is None or phone_user.role == UserRole.STUDENT.value:
-            user = phone_user
+        user = db.query(User).filter(User.phone_number == phone_number).first()
 
     # 4. Update or create local user.
     if user is not None:

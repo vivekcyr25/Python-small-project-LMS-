@@ -147,23 +147,10 @@ const ProfilePage = () => {
                   {fullName ? fullName.split(' ').map(n=>n[0]).join('').toUpperCase() : 'VS'}
                 </div>
               )}
-              <button 
-                onClick={() => addToast('Image upload triggers local mockup updates.')}
-                className="absolute bottom-2 right-2 z-20 bg-blue-600 hover:bg-blue-500 p-2.5 rounded-xl border border-white/20 text-white shadow-lg transition-all hover:scale-110"
-              >
-                <Camera size={16} />
-              </button>
             </div>
 
             <h2 className="mt-5 text-xl font-bold text-white tracking-wide">{fullName}</h2>
             <p className="text-xs font-semibold text-blue-400 mt-1 capitalize uppercase tracking-widest">{user?.role || 'Learner'}</p>
-
-            <button 
-              onClick={() => addToast('Mock file dialog opened.')}
-              className="mt-6 w-full flex items-center justify-center gap-2 py-3 border border-white/5 bg-white/5 hover:bg-white/10 text-white text-sm font-semibold rounded-2xl transition-all"
-            >
-              Change Photo
-            </button>
 
             {/* Metadata Card */}
             <div className="mt-6 w-full py-4 border-t border-white/5 text-left flex justify-between items-center text-xs text-slate-400">
@@ -189,7 +176,8 @@ const ProfilePage = () => {
                       type="text" 
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="apple-input w-full pl-10" 
+                      className="apple-input w-full !pl-10" 
+                      style={{ paddingLeft: '2.75rem' }}
                       placeholder="Your Name"
                     />
                     <User size={16} className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -204,7 +192,8 @@ const ProfilePage = () => {
                       type="email" 
                       value={email} 
                       readOnly
-                      className="apple-input w-full pl-10 opacity-60 cursor-not-allowed bg-black/20" 
+                      className="apple-input w-full !pl-10 opacity-60 cursor-not-allowed bg-black/20" 
+                      style={{ paddingLeft: '2.75rem', paddingRight: '2.5rem' }}
                     />
                     <Mail size={16} className="absolute left-3.5 top-3.5 text-slate-500" />
                     <Lock size={14} className="absolute right-3.5 top-4 text-slate-500" />
@@ -219,7 +208,8 @@ const ProfilePage = () => {
                       type="text" 
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      className="apple-input w-full pl-10" 
+                      className="apple-input w-full !pl-10" 
+                      style={{ paddingLeft: '2.75rem' }}
                       placeholder="City, Country"
                     />
                     <MapPin size={16} className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -234,7 +224,8 @@ const ProfilePage = () => {
                       type="url" 
                       value={website}
                       onChange={(e) => setWebsite(e.target.value)}
-                      className="apple-input w-full pl-10" 
+                      className="apple-input w-full !pl-10" 
+                      style={{ paddingLeft: '2.75rem' }}
                       placeholder="https://..."
                     />
                     <Globe size={16} className="absolute left-3.5 top-3.5 text-slate-400" />
@@ -251,7 +242,8 @@ const ProfilePage = () => {
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     rows={3}
-                    className="apple-input w-full pl-10 resize-none"
+                    className="apple-input w-full !pl-10 resize-none"
+                    style={{ paddingLeft: '2.75rem' }}
                     placeholder="Tell us about yourself..."
                   />
                   <FileText size={16} className="absolute left-3.5 top-3.5 text-slate-400" />
