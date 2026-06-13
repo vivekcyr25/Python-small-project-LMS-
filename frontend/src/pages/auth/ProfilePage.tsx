@@ -111,13 +111,14 @@ const ProfilePage = () => {
       </div>
 
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-white/10 p-8 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -z-10" />
-        <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center justify-center md:justify-start gap-3">
+      <div className="glass-card p-7 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-5">
+        <div className="absolute -top-20 -right-16 w-56 h-56 bg-ios-accent/6 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-10 w-48 h-48 bg-ios-purple/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-[28px] font-semibold text-ios-text tracking-tight">
             Profile Studio
           </h1>
-          <p className="text-slate-300 mt-2 text-base">Manage your personal information, settings and preferences.</p>
+          <p className="text-ios-text-secondary mt-1.5 text-[15px]">Manage your personal information, settings and preferences.</p>
         </div>
         <button 
           onClick={() => window.history.back()}

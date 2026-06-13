@@ -63,7 +63,7 @@ const CourseLearnPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-ios-accent/30 border-t-ios-accent" />
       </div>
     );
   }
@@ -79,20 +79,20 @@ const CourseLearnPage = () => {
   return (
     <div data-testid="course-learn-page" className="-mx-4 md:-mx-8 -my-6 h-[calc(100vh-4rem)] flex flex-col">
       {/* Top bar */}
-      <div className="flex items-center gap-3 px-4 md:px-8 py-3 border-b border-white/10 bg-black/30 backdrop-blur-md">
+      <div className="flex items-center gap-3 px-4 md:px-8 py-3 border-b border-white/[0.08] glass">
         <Link
           to={`/courses/${courseId}`}
-          className="flex items-center gap-1 text-sm text-slate-400 hover:text-white"
+          className="flex items-center gap-1 text-[13px] text-ios-text-secondary hover:text-ios-text transition-colors"
         >
           <ArrowLeft size={14} /> Course
         </Link>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white truncate">{data.course.title}</p>
+          <p className="text-[13px] font-medium text-ios-text truncate">{data.course.title}</p>
         </div>
         <button
           type="button"
           onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-          className="md:hidden p-2 rounded-lg text-slate-300 hover:bg-white/5"
+          className="md:hidden p-2 rounded-[12px] text-ios-text-secondary hover:bg-white/[0.06]"
         >
           {mobileSidebarOpen ? <X size={18} /> : <Menu size={18} />}
         </button>

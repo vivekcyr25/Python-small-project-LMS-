@@ -5,8 +5,18 @@ import { getCourses } from '../../features/courses/api';
 import { getCourseProgress, type CourseProgressSummary } from '../../features/progress/api';
 import { Card } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
+import { Progress } from '../../components/ui/progress';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import {
+  ChartComponent,
+  SeriesCollectionDirective,
+  SeriesDirective,
+  ColumnSeries,
+  Category,
+  Inject,
+  Tooltip,
+} from '@syncfusion/ej2-react-charts';
 import { 
   BookOpen, 
   Award, 
@@ -124,53 +134,81 @@ const StudentDashboard = () => {
         </div>
       </motion.div>
 
-      {/* 2. Apple iOS 26 Stat Grid */}
-      <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        
+      {/* 2. iOS Stat Grid + Chart */}
+      <motion.div variants={item} className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div className="xl:col-span-2 grid grid-cols-2 gap-4">
         {/* Stat 1 */}
-        <Card className="glass-card p-5 border border-white/5 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/10">
+        <Card className="p-5 flex items-center gap-4">
+          <div className="w-11 h-11 rounded-[14px] bg-ios-accent/15 flex items-center justify-center text-ios-accent">
             <BookOpen size={20} />
           </div>
           <div>
-            <p className="text-2xl font-black text-white">{dashboardLoading ? '...' : enrolledCourses.length}</p>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Courses Enrolled</p>
+            <p className="text-2xl font-semibold text-ios-text">{dashboardLoading ? '...' : enrolledCourses.length}</p>
+            <p className="text-[10px] text-ios-text-secondary font-medium uppercase tracking-wide">Enrolled</p>
           </div>
         </Card>
 
         {/* Stat 2 */}
-        <Card className="glass-card p-5 border border-white/5 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/10">
+        <Card className="p-5 flex items-center gap-4">
+          <div className="w-11 h-11 rounded-[14px] bg-ios-green/15 flex items-center justify-center text-ios-green">
             <TrendingUp size={20} />
           </div>
           <div>
-            <p className="text-2xl font-black text-white">{dashboardLoading ? '...' : `${overallProgress}%`}</p>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Overall Progress</p>
+            <p className="text-2xl font-semibold text-ios-text">{dashboardLoading ? '...' : `${overallProgress}%`}</p>
+            <p className="text-[10px] text-ios-text-secondary font-medium uppercase tracking-wide">Progress</p>
           </div>
         </Card>
 
         {/* Stat 3 */}
-        <Card className="glass-card p-5 border border-white/5 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 border border-amber-500/10">
+        <Card className="p-5 flex items-center gap-4">
+          <div className="w-11 h-11 rounded-[14px] bg-ios-orange/15 flex items-center justify-center text-ios-orange">
             <Clock size={20} />
           </div>
           <div>
-            <p className="text-2xl font-black text-white">{dashboardLoading ? '...' : completedLessons}</p>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Lessons Completed</p>
+            <p className="text-2xl font-semibold text-ios-text">{dashboardLoading ? '...' : completedLessons}</p>
+            <p className="text-[10px] text-ios-text-secondary font-medium uppercase tracking-wide">Lessons Done</p>
           </div>
         </Card>
 
         {/* Stat 4 */}
-        <Card className="glass-card p-5 border border-white/5 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/10">
+        <Card className="p-5 flex items-center gap-4">
+          <div className="w-11 h-11 rounded-[14px] bg-ios-purple/15 flex items-center justify-center text-ios-purple">
             <Award size={20} />
           </div>
           <div>
-            <p className="text-2xl font-black text-white">{dashboardLoading ? '...' : certificatesEarned}</p>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Certificates Earned</p>
+            <p className="text-2xl font-semibold text-ios-text">{dashboardLoading ? '...' : certificatesEarned}</p>
+            <p className="text-[10px] text-ios-text-secondary font-medium uppercase tracking-wide">Certificates</p>
           </div>
         </Card>
+        </div>
 
+        <Card className="p-5">
+          <h3 className="text-[13px] font-semibold text-ios-text-secondary mb-4">Learning Overview</h3>
+          <ChartComponent
+            primaryXAxis={{ valueType: 'Category', labelStyle: { color: 'rgba(255,255,255,0.5)', size: '11px' }, majorGridLines: { width: 0 } }}
+            primaryYAxis={{ labelStyle: { color: 'rgba(255,255,255,0.5)', size: '11px' }, majorGridLines: { color: 'rgba(255,255,255,0.06)' }, maximum: 100 }}
+            height="180px"
+            background="transparent"
+            tooltip={{ enable: true }}
+          >
+            <Inject services={[ColumnSeries, Category, Tooltip]} />
+            <SeriesCollectionDirective>
+              <SeriesDirective
+                dataSource={[
+                  { x: 'Progress', y: overallProgress },
+                  { x: 'Lessons', y: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0 },
+                  { x: 'Certs', y: enrolledCourses.length > 0 ? Math.round((certificatesEarned / enrolledCourses.length) * 100) : 0 },
+                ]}
+                xName="x"
+                yName="y"
+                type="Column"
+                cornerRadius={{ topLeft: 8, topRight: 8 }}
+                fill="#6b9fd4"
+                columnWidth={0.5}
+              />
+            </SeriesCollectionDirective>
+          </ChartComponent>
+        </Card>
       </motion.div>
 
       {/* 3. Middle Section: Continue Learning & Quick Actions */}
@@ -204,10 +242,8 @@ const StudentDashboard = () => {
                 <span className="text-slate-400 font-medium">Course Progress</span>
                 <span className="text-blue-400 font-bold">{continuePercent}%</span>
               </div>
-              {/* iOS style progress bar */}
-              <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden border border-white/5">
-                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full" style={{ width: `${continuePercent}%` }} />
-              </div>
+              {/* iOS progress bar */}
+              <Progress value={continuePercent} label="Course Progress" />
 
               <div className="flex items-center gap-3 pt-2">
                 <Link to={continueCourse ? `/courses/${continueCourse.id}/learn` : '/courses'} className="flex-1">

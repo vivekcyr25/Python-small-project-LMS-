@@ -8,6 +8,7 @@ import api from '../../lib/api';
 import { motion } from 'framer-motion';
 import { Sparkles, UserPlus } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import LiquidGlassShader from '../../components/effects/LiquidGlassShader';
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
@@ -40,34 +41,25 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen text-white overflow-hidden relative">
-      {/* Animated Deep Space Background */}
-      <div className="space-container">
-        <div className="space-stars" />
-        <div className="space-nebula" />
-        <div className="space-dust" />
-      </div>
-
-      {/* Decorative Orbs */}
-      <div className="absolute top-1/4 right-1/4 w-40 h-40 bg-cyan-500/10 rounded-full blur-[100px] animate-pulse" />
-      <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-violet-500/10 rounded-full blur-[120px] animate-pulse delay-1000" />
+    <div className="flex items-center justify-center min-h-screen text-ios-text overflow-hidden relative font-sf">
+      <LiquidGlassShader />
       
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md relative z-10 p-4"
+        initial={{ opacity: 0, y: 20, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="w-full max-w-[400px] relative z-10 p-4"
       >
-        <Card className="glass-card border border-white/10 shadow-2xl">
-          <CardHeader className="text-center space-y-2">
-            <div className="flex justify-center mb-2">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                <Sparkles size={24} className="text-white" />
+        <Card className="border-0 shadow-ios-glass">
+          <CardHeader className="text-center space-y-2 pb-2">
+            <div className="flex justify-center mb-1">
+              <div className="w-14 h-14 rounded-[18px] bg-gradient-to-b from-ios-accent to-ios-accent-deep flex items-center justify-center">
+                <Sparkles size={26} className="text-white" />
               </div>
             </div>
-            <CardTitle className="text-3xl font-extrabold tracking-tight text-white">AIPS LMS</CardTitle>
-            <CardDescription className="text-slate-400 text-xs uppercase tracking-wider font-bold">
-              Learn. Track. Grow.
+            <CardTitle className="text-[28px] font-semibold tracking-tight">Create Account</CardTitle>
+            <CardDescription className="text-ios-text-secondary text-[13px]">
+              Join AIPS LMS today
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -127,7 +119,7 @@ const RegisterPage = () => {
                   {error}
                 </motion.p>
               )}
-              <Button type="submit" variant="gradient" className="w-full flex items-center gap-2 btn-premium" disabled={loading}>
+              <Button type="submit" variant="ios" className="w-full flex items-center gap-2" disabled={loading}>
                 <UserPlus size={16} />
                 {loading ? 'Registering...' : 'Register'}
               </Button>

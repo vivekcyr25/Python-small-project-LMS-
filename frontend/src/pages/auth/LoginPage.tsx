@@ -2,22 +2,22 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../components/ui/card';
+import { SegmentedControl } from '../../components/ui/SegmentedControl';
 import useAuthStore from '../../stores/authStore';
 import api from '../../lib/api';
 import { motion } from 'framer-motion';
 import { Sparkles, LogIn, GraduationCap, BookOpen, ShieldCheck } from 'lucide-react';
 import GoogleLoginButton from '../../components/auth/GoogleLoginButton';
-import { isFirebaseMockMode } from '../../lib/firebase';
-import { cn } from '../../lib/utils';
+import LiquidGlassShader from '../../components/effects/LiquidGlassShader';
+import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 
 type LoginRole = 'student' | 'instructor' | 'admin';
 
-const ROLE_TABS: { key: LoginRole; label: string; Icon: any }[] = [
-  { key: 'student',    label: 'Student',    Icon: GraduationCap },
-  { key: 'instructor', label: 'Instructor', Icon: BookOpen },
-  { key: 'admin',      label: 'Admin',      Icon: ShieldCheck },
+const ROLE_TABS = [
+  { value: 'student' as LoginRole, label: 'Student', icon: <GraduationCap size={14} /> },
+  { value: 'instructor' as LoginRole, label: 'Instructor', icon: <BookOpen size={14} /> },
+  { value: 'admin' as LoginRole, label: 'Admin', icon: <ShieldCheck size={14} /> },
 ];
 
 const LoginPage = () => {
@@ -49,11 +49,8 @@ const LoginPage = () => {
       const response = await api.post('/auth/login', { email, password });
       const { access_token, user: u } = response.data;
 
-      // Enforce that the account's actual role matches what was chosen.
       if (u.role !== role) {
-        setError(
-          `This account is a ${u.role}, not a ${role}. Please pick the right role tab.`
-        );
+        setError(`This account is a ${u.role}, not a ${role}. Please pick the right role tab.`);
         setLoading(false);
         return;
       }
@@ -72,128 +69,102 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen text-white overflow-hidden relative">
-      {/* Animated Deep Space Background */}
-      <div className="space-container">
-        <div className="space-stars" />
-        <div className="space-nebula" />
-        <div className="space-dust" />
-      </div>
-
-      {/* Decorative Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-cyan-500/10 rounded-full blur-[100px] animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-violet-500/10 rounded-full blur-[120px] animate-pulse delay-1000" />
+    <div className="flex items-center justify-center min-h-screen text-ios-text overflow-hidden relative font-sf">
+      <LiquidGlassShader />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md relative z-10 p-4"
+        initial={{ opacity: 0, y: 20, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="w-full max-w-[400px] relative z-10 p-4"
       >
-        <Card className="glass-card border border-white/10 shadow-2xl">
-          <CardHeader className="text-center space-y-2">
-            <div className="flex justify-center mb-2">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                <Sparkles size={24} className="text-white" />
+        <Card className="border-0 shadow-ios-glass">
+          <CardHeader className="text-center space-y-2 pb-2">
+            <div className="flex justify-center mb-1">
+              <div className="w-14 h-14 rounded-[18px] bg-gradient-to-b from-ios-accent to-ios-accent-deep flex items-center justify-center">
+                <Sparkles size={26} className="text-white" />
               </div>
             </div>
-            <CardTitle className="text-3xl font-extrabold tracking-tight text-white">AIPS LMS</CardTitle>
-            <CardDescription className="text-slate-400 text-xs uppercase tracking-wider font-bold">
+            <CardTitle className="text-[28px] font-semibold tracking-tight">AIPS LMS</CardTitle>
+            <CardDescription className="text-ios-text-secondary text-[13px]">
               Learn. Track. Grow.
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-5">
-            {/* ── Role selector ── */}
-            <div data-testid="role-selector" className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-black/30 border border-white/10">
-              {ROLE_TABS.map(({ key, label, Icon }) => {
-                const active = role === key;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    data-testid={`role-${key}`}
-                    onClick={() => setRole(key)}
-                    className={cn(
-                      'relative flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all',
-                      active
-                        ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5',
-                    )}
-                  >
-                    <Icon size={14} />
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
+            <SegmentedControl
+              options={ROLE_TABS}
+              value={role}
+              onChange={setRole}
+              testId="role-selector"
+            />
 
-            {/* ── Email / Password form ── */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Email</label>
-                <Input
-                  type="email"
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-medium text-ios-text-secondary">Email</label>
+                <TextBoxComponent
                   placeholder="email@example.com"
+                  type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  change={(e: { value: string }) => setEmail(e.value)}
+                  cssClass="e-outline w-full"
+                  floatLabelType="Never"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Password</label>
-                <Input
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-medium text-ios-text-secondary">Password</label>
+                <TextBoxComponent
+                  placeholder="Enter password"
                   type="password"
-                  placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  change={(e: { value: string }) => setPassword(e.value)}
+                  cssClass="e-outline w-full"
+                  floatLabelType="Never"
                 />
               </div>
               {error && (
                 <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-sm text-red-400"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-[13px] text-ios-red"
                 >
                   {error}
                 </motion.p>
               )}
               <Button
                 type="submit"
-                variant="gradient"
-                className="w-full flex items-center gap-2 btn-premium"
+                variant="ios"
+                className="w-full flex items-center gap-2"
                 disabled={loading}
               >
-                <LogIn size={16} />
-                {loading ? 'Logging in...' : `Login as ${ROLE_TABS.find(r => r.key === role)?.label}`}
+                <LogIn size={15} />
+                {loading ? 'Signing in...' : `Sign in as ${ROLE_TABS.find((r) => r.value === role)?.label}`}
               </Button>
             </form>
 
-            {/* OAuth — Student only (Google for instructor/admin is disabled by policy) */}
             {role === 'student' && (
-              <div className="space-y-5">
+              <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-white/10" />
-                  <span className="text-xs text-slate-500 whitespace-nowrap">or continue with</span>
-                  <div className="flex-1 h-px bg-white/10" />
+                  <div className="flex-1 h-px bg-white/[0.06]" />
+                  <span className="text-[11px] text-ios-text-secondary">or</span>
+                  <div className="flex-1 h-px bg-white/[0.06]" />
                 </div>
                 <GoogleLoginButton />
               </div>
             )}
 
             {role !== 'student' && (
-              <p className="text-[11px] text-slate-500 text-center pt-1">
-                Google sign-in is available for students only. {role === 'instructor' ? 'Instructors' : 'Admins'} use email + password.
+              <p className="text-[11px] text-ios-text-secondary text-center">
+                Google sign-in is for students only. Use email and password.
               </p>
             )}
           </CardContent>
 
-          <CardFooter className="justify-center">
-            <p className="text-sm text-slate-400">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-blue-400 hover:text-blue-300 transition-colors font-medium">
-                Register
+          <CardFooter className="justify-center pb-6">
+            <p className="text-[13px] text-ios-text-secondary">
+              No account?{' '}
+              <Link to="/register" className="text-ios-accent hover:text-ios-accent/80 font-medium transition-colors">
+                Create one
               </Link>
             </p>
           </CardFooter>

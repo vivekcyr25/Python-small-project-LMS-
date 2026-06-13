@@ -3,37 +3,35 @@ import { cn } from "../../lib/utils"
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'glass' | 'gradient'
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'glass' | 'gradient' | 'ios'
   size?: 'sm' | 'md' | 'lg'
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'default', size = 'md', ...props }, ref) => {
-    const baseStyles = "inline-flex items-center justify-center font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none"
-    
+    const baseStyles = "inline-flex items-center justify-center font-medium transition-all duration-500 ease-ios focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ios-accent/40 disabled:opacity-40 disabled:pointer-events-none active:scale-[0.98]"
+
     const variants = {
-      default: "bg-white text-black hover:bg-white/90 shadow-lg shadow-white/10",
-      destructive: "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20",
-      outline: "border border-white/20 bg-transparent hover:bg-white/5 text-white",
-      secondary: "bg-slate-800 text-white hover:bg-slate-700 shadow-lg shadow-slate-900/50",
-      ghost: "hover:bg-white/5 text-white",
-      link: "underline-offset-4 hover:underline text-white",
-      glass: "glass text-white hover:bg-white/10",
-      gradient: "bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 shadow-lg shadow-blue-500/25"
+      default: "bg-white text-black hover:bg-white/90 shadow-lg",
+      destructive: "bg-ios-red text-white hover:bg-ios-red/90",
+      outline: "border border-white/15 bg-transparent hover:bg-white/[0.06] text-ios-text",
+      secondary: "bg-white/10 text-ios-text hover:bg-white/15",
+      ghost: "hover:bg-white/[0.06] text-ios-text",
+      link: "underline-offset-4 hover:underline text-ios-accent",
+      glass: "glass text-ios-text hover:bg-white/10",
+      gradient: "btn-ios text-white",
+      ios: "btn-ios text-white",
     }
 
     const sizes = {
-      sm: "h-9 px-3 text-xs rounded-lg",
-      md: "h-11 px-5 text-sm rounded-xl",
-      lg: "h-12 px-6 text-base rounded-2xl"
+      sm: "h-9 px-3.5 text-xs rounded-[12px]",
+      md: "h-11 px-5 text-sm rounded-[14px]",
+      lg: "h-12 px-6 text-[15px] rounded-[16px]",
     }
-
-    const currentVariant = variants[variant] || variants.default
-    const currentSize = sizes[size] || sizes.md
 
     return (
       <button
-        className={cn(baseStyles, currentVariant, currentSize, className)}
+        className={cn(baseStyles, variants[variant], sizes[size], className)}
         ref={ref}
         {...props}
       />

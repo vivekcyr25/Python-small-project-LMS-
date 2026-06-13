@@ -51,20 +51,19 @@ const InstructorCourseBuilderPage = () => {
     <div data-testid="course-builder-page" className="max-w-5xl mx-auto space-y-6">
       <Link
         to={`/courses/${courseId}`}
-        className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white"
+        className="inline-flex items-center gap-1 text-[13px] text-ios-text-secondary hover:text-ios-text transition-colors"
       >
         <ArrowLeft size={14} /> Back to course
       </Link>
 
-      {/* Course header */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="glass-card p-6 flex items-center gap-5 border-white/10">
-          <div className="w-14 h-14 rounded-2xl bg-cyan-500/15 flex items-center justify-center text-cyan-300">
+        <Card className="p-6 flex items-center gap-5">
+          <div className="w-14 h-14 rounded-[16px] bg-gradient-to-br from-ios-accent/10 to-ios-purple/10 flex items-center justify-center text-ios-accent">
             <BookOpen size={26} />
           </div>
           <div className="flex-1">
-            <p className="text-xs uppercase tracking-widest text-cyan-400/80">Course Builder</p>
-            <h1 className="text-2xl font-bold text-white mt-1">{course?.title || 'Course'}</h1>
+            <p className="text-[10px] uppercase tracking-wide text-ios-purple font-medium">Course Builder</p>
+            <h1 className="text-[22px] font-semibold text-ios-text mt-1">{course?.title || 'Course'}</h1>
             <div className="flex items-center gap-2 mt-2">
               <Badge variant={course?.is_published ? 'success' : 'warning'}>
                 {course?.is_published ? 'Published' : 'Draft'}
@@ -72,13 +71,13 @@ const InstructorCourseBuilderPage = () => {
               <Badge variant="premium" className="capitalize">
                 {course?.level || 'Beginner'}
               </Badge>
-              <span className="text-xs text-slate-500">
+              <span className="text-[11px] text-ios-text-secondary">
                 {sections?.length ?? 0} section{(sections?.length ?? 0) !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
           <Link to={`/courses/${courseId}/edit`}>
-            <Button variant="glass" size="sm">Edit metadata</Button>
+            <Button variant="secondary" size="sm">Edit metadata</Button>
           </Link>
         </Card>
       </motion.div>
@@ -100,23 +99,23 @@ const InstructorCourseBuilderPage = () => {
         {showNewSection ? (
           <form
             onSubmit={(e) => { e.preventDefault(); if (newTitle.trim()) addSection.mutate(); }}
-            className="rounded-xl border border-cyan-400/40 bg-cyan-500/5 p-4 flex gap-2"
+            className="rounded-[14px] border border-ios-accent/30 bg-ios-accent/5 p-4 flex gap-2"
           >
             <input
               autoFocus
               placeholder="Section title…"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white"
+              className="flex-1 ios-input py-2 text-[13px]"
             />
-            <Button type="submit" variant="gradient" size="sm" disabled={addSection.isPending}>Add</Button>
+            <Button type="submit" variant="ios" size="sm" disabled={addSection.isPending}>Add</Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => setShowNewSection(false)}>Cancel</Button>
           </form>
         ) : (
           <Button
             data-testid="add-section-btn"
             onClick={() => setShowNewSection(true)}
-            variant="glass"
+            variant="secondary"
             className="w-full flex items-center justify-center gap-2"
           >
             <Plus size={16} /> Add Section
